@@ -1,5 +1,5 @@
 @description('Name of the Azure region')
-param location string = resourceGroup().location
+param location string = 'centralus'
 
 @description('Name of the Azure Container Registry')
 param acrName string = 'myacr${uniqueString(resourceGroup().id)}'
@@ -11,7 +11,7 @@ param appServicePlanName string = 'myAppServicePlan'
 param webAppName string = 'my-azure-flask-app'
 
 @description('SKU for the App Service Plan')
-param sku string = 'B1'
+param sku string = 'F1'
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: acrName
@@ -66,8 +66,4 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
     }
     httpsOnly: true
   }
-  dependsOn: [
-    acr
-    appServicePlan
-  ]
 }
