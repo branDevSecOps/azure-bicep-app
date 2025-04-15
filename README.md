@@ -1,6 +1,11 @@
 # 🚀 Azure Flask App Deployment (Project 4)
 
-This project demonstrates how to deploy a Dockerized Flask web application to Azure using Bicep for infrastructure as code, Azure Container Registry for storing the image, Azure App Service for hosting the app, and GitHub Actions for continuous deployment.
+This project demonstrates how to deploy a Dockerized Flask web application to Azure using Bicep for infrastructure as code, Azure Container Registry for storing the image, Azure App Service for hosting the app, and GitHub Actions for continuous deployment. It also includes Application Insights integration for real-time monitoring.
+
+---
+
+## 🌐 Live Demo
+Visit: https://<your-app-name>.azurewebsites.net  
 
 ---
 
@@ -15,6 +20,7 @@ This project demonstrates how to deploy a Dockerized Flask web application to Az
 | Azure Container Registry (ACR) | Docker image hosting         |
 | Azure App Service | Deploy containerized app       |
 | GitHub Actions  | CI/CD automation pipeline        |
+| Application Insights | Real-time monitoring & logging |
 
 ---
 
@@ -104,22 +110,57 @@ az ad sp create-for-rbac --name github-actions-flask \
 
 Paste the output JSON into GitHub → Settings → Secrets → Actions.
 
+**Note:** Once created, your GitHub Actions `AZURE_CREDENTIALS` secret remains valid even if you delete and later recreate the Azure resource group — as long as the service principal and subscription stay the same.
+
+---
+
+## 📊 6. Application Insights Integration
+
+Add real-time monitoring with Azure Application Insights:
+- Create App Insights instance via CLI:
+```bash
+az monitor app-insights component create \
+  --app flask-app-insights \
+  --location eastus \
+  --resource-group flask-rg \
+  --application-type web
+```
+- Add the Instrumentation Key to App Service:
+```bash
+az webapp config appsettings set \
+  --name <your-webapp-name> \
+  --resource-group flask-rg \
+  --settings APPINSIGHTS_INSTRUMENTATIONKEY=<key>
+```
+- Update Flask app with logger:
+```python
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+logger.addHandler(AzureLogHandler(connection_string='InstrumentationKey=' + os.environ.get('APPINSIGHTS_INSTRUMENTATIONKEY')))
+```
+
+Query logs in Azure Portal:
+```kusto
+traces
+| order by timestamp desc
+```
+
 ---
 
 ## 💡 Lessons Learned
-- Building out Azure App Services from scratch with Bicep
-- Working with Azure Container Registry & ACR login
-- Securely injecting Docker credentials into App Services
-- Debugging issues with quotas, deployment timing, and auth
-- Automating cloud deployment pipelines with GitHub Actions
+- Building Azure App Services and ACR from scratch with Bicep
+- Secure ACR authentication and container deployment
+- Setting up GitHub Actions for full CI/CD automation
+- Logging and monitoring with Azure Application Insights
+- Debugging quota limits, resource provider issues, and deployment flow
 
 ---
 
 ## 📌 Next Steps
 - [x] Add GitHub Actions workflow for CI/CD automation
-- [ ] Add Application Insights for monitoring
+- [x] Add Application Insights for monitoring
 - [ ] Add custom domain + HTTPS
 - [ ] Add staging slots for zero-downtime deployments
+- [ ] Create a walkthrough GIF demo
 
 ---
 
@@ -132,5 +173,7 @@ LinkedIn: [linkedin.com/in/brandonmlester](https://www.linkedin.com/in/brandonml
 
 ## 📜 License
 MIT
+
+
 
 
