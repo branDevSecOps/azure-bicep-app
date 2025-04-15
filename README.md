@@ -99,7 +99,9 @@ Debugging issues with quotas, deployment timing, and auth
 g
 🧠 Author
 
-Brandon LesterYouTube: BrandevopsLinkedIn: linkedin.com/in/brandonmlester
+Brandon Lester 
+YouTube: Brandevops
+LinkedIn: linkedin.com/in/brandonmlester
 
 📜 License
 
